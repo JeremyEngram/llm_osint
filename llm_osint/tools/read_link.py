@@ -1,11 +1,8 @@
 from typing import Optional
-
 from langchain.agents import Tool
-
 from llm_osint.link_scraping import scrape_text, chunk_and_strip_html
 from llm_osint.llm_map_reduce import map_reduce_texts
 from llm_osint import llm
-
 
 PARSE_MAP_PROMPT = """
 Given this text from {link} extract key unique personal characteristics and links about {name} as a list.
@@ -35,16 +32,15 @@ For example
 """
 
 PARSE_REDUCE_PROMPT = """
-Given these chunks of details from {link} about {name}. Merge and duduplicate these into a single list.
+Given these chunks of details from {link} about {name}. Merge and deduplicate these into a single list.
 
 If some details disagree, pick the most common one. For links, include at most 10 of the most related links.
 
 {{texts}}
 """
 
-
 class ReadLinkWrapper:
-    def __init__(
+    def __init(
         self,
         map_prompt: Optional[str] = PARSE_MAP_PROMPT,
         example_instructions: Optional[str] = PARSE_EXAMPLE_EXTRACTION,
@@ -60,7 +56,7 @@ class ReadLinkWrapper:
 
     def run(self, query: str) -> str:
         if query.endswith(".pdf"):
-            return "Cannot read links that end in pdf"
+            return "Cannot read links that end in PDF"
         chunks = chunk_and_strip_html(scrape_text(query), 4000)
         format_args = {**self.format_kwargs, "link": query, "example_instructions": self.example_instructions}
         return map_reduce_texts(
@@ -71,11 +67,10 @@ class ReadLinkWrapper:
             model=self.model,
         )
 
-
 def get_read_link_tool(**kwargs) -> Tool:
     read_link = ReadLinkWrapper(**kwargs)
     return Tool(
         name="Read Link",
         func=read_link.run,
-        description="useful to read and extract the contents of any link. the input should be a valid url starting with http or https",
+        description="Useful to read and extract the contents of any link. The input should be a valid URL starting with http or https",
     )
