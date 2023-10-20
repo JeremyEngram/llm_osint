@@ -1,17 +1,13 @@
 from typing import List, Optional, Union
-
 from llm_osint import cache_utils, llm
-
 
 @cache_utils.cache_func
 def map(prompt: str, text: str, model: llm.LLMModel) -> str:
-    return model.call_as_llm(prompt.format(text=text))
-
+    return model.call_as_llm(prompt.format(text=text)
 
 @cache_utils.cache_func
 def reduce(prompt: str, texts: List[str], model: llm.LLMModel) -> str:
     return model.call_as_llm(prompt.format(texts="\n\n".join(texts)))
-
 
 def map_reduce_texts(
     texts: List[str],
@@ -23,12 +19,7 @@ def map_reduce_texts(
     if model is None:
         model = llm.get_default_fast_llm()
 
-    mapped_texts = []
-    for text in texts:
-        if map_prompt is None:
-            mapped_texts.append(text)
-        else:
-            mapped_texts.append(map(map_prompt, text, model))
+    mapped_texts = [text if map_prompt is None else map(map_prompt, text, model) for text in texts]
 
     while len(mapped_texts) > 1:
         reduced_chunks = []
