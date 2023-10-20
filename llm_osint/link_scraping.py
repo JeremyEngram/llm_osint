@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from llm_osint import cache_utils
 
 MAX_LINK_LEN = 120
-
+    
 
 @cache_utils.cache_func
 def scrape_text(url: str, retries: Optional[int] = 2) -> str:
