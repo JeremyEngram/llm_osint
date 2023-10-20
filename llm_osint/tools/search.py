@@ -1,8 +1,6 @@
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.agents import Tool
-
 from llm_osint import cache_utils
-
 
 class GoogleSerperSearchWrapper(GoogleSerperAPIWrapper):
     @cache_utils.cache_func
@@ -44,11 +42,10 @@ class GoogleSerperSearchWrapper(GoogleSerperAPIWrapper):
 
         return "\n\n".join(snippets)
 
-
 def get_search_tool(**kwargs) -> Tool:
     search = GoogleSerperSearchWrapper(**kwargs)
     return Tool(
         name="Search Term",
         func=search.run,
-        description="useful for when you need to find information about general things, names, usernames, places, etc. the input should be a search term",
+        description="Useful for when you need to find information about general things, names, usernames, places, etc. The input should be a search term.",
     )
